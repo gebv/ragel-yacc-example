@@ -1,0 +1,78 @@
+
+state 0
+	$accept: .commands $end 
+	commands: .    (1)
+
+	.  reduce 1 (src line 18)
+
+	commands  goto 1
+
+state 1
+	$accept:  commands.$end 
+	commands:  commands.command 
+
+	$end  accept
+	OPENB  shift 5
+	WORD  shift 6
+	.  error
+
+	command  goto 2
+	param  goto 3
+	word  goto 4
+
+state 2
+	commands:  commands command.    (2)
+
+	.  reduce 2 (src line 19)
+
+
+state 3
+	command:  param.    (3)
+
+	.  reduce 3 (src line 21)
+
+
+state 4
+	command:  word.    (4)
+
+	.  reduce 4 (src line 23)
+
+
+state 5
+	param:  OPENB.WORD CLOSEB 
+
+	WORD  shift 7
+	.  error
+
+
+state 6
+	word:  WORD.    (5)
+
+	.  reduce 5 (src line 25)
+
+
+state 7
+	param:  OPENB WORD.CLOSEB 
+
+	CLOSEB  shift 8
+	.  error
+
+
+state 8
+	param:  OPENB WORD CLOSEB.    (6)
+
+	.  reduce 6 (src line 30)
+
+
+6 terminals, 5 nonterminals
+7 grammar rules, 9/16000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+54 working sets used
+memory: parser 3/240000
+0 extra closures
+4 shift entries, 1 exceptions
+4 goto entries
+0 entries saved by goto default
+Optimizer space used: output 8/240000
+8 table entries, 0 zero
+maximum spread: 6, maximum offset: 6
