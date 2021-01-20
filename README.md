@@ -13,3 +13,10 @@ References
 * Simple sql parser example (academic) https://github.com/vignif/lex-yacc-SQL-parser
 * Example on go ragel + yacc for writing your own simple pseudo language https://mhamrah.medium.com/lexing-with-ragel-and-parsing-with-yacc-using-go-81e50475f88f
 * example of how ragel works to parse the expression `<param> = <value>` http://thingsaaronmade.com/blog/a-simple-intro-to-writing-a-lexer-with-ragel.html
+* https://github.com/mhamrah/thermostat example ragel+yacc for handle commands
+```
+target temperature 5
+heat on
+target temperature 10
+heat off
+```
