@@ -1,0 +1,143 @@
+
+state 0
+	$accept: .any_command $end 
+
+	SELECT  shift 5
+	.  error
+
+	command  goto 2
+	select_stmt  goto 3
+	base_select  goto 4
+	any_command  goto 1
+
+state 1
+	$accept:  any_command.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	any_command:  command.semicolon_opt 
+	semicolon_opt: .    (2)
+
+	';'  shift 7
+	.  reduce 2 (src line 29)
+
+	semicolon_opt  goto 6
+
+state 3
+	command:  select_stmt.    (4)
+
+	.  reduce 4 (src line 33)
+
+
+state 4
+	select_stmt:  base_select.    (5)
+
+	.  reduce 5 (src line 39)
+
+
+state 5
+	base_select:  SELECT.list_fields FROM table_reference 
+
+	STRING  shift 10
+	.  error
+
+	field  goto 9
+	list_fields  goto 8
+
+state 6
+	any_command:  command semicolon_opt.    (1)
+
+	.  reduce 1 (src line 23)
+
+
+state 7
+	semicolon_opt:  ';'.    (3)
+
+	.  reduce 3 (src line 31)
+
+
+state 8
+	base_select:  SELECT list_fields.FROM table_reference 
+	list_fields:  list_fields.COMMA field 
+
+	COMMA  shift 12
+	FROM  shift 11
+	.  error
+
+
+state 9
+	list_fields:  field.    (7)
+
+	.  reduce 7 (src line 51)
+
+
+state 10
+	field:  STRING.    (9)
+	field:  STRING.AS STRING 
+
+	AS  shift 13
+	.  reduce 9 (src line 60)
+
+
+state 11
+	base_select:  SELECT list_fields FROM.table_reference 
+
+	STRING  shift 15
+	.  error
+
+	table_reference  goto 14
+
+state 12
+	list_fields:  list_fields COMMA.field 
+
+	STRING  shift 10
+	.  error
+
+	field  goto 16
+
+state 13
+	field:  STRING AS.STRING 
+
+	STRING  shift 17
+	.  error
+
+
+state 14
+	base_select:  SELECT list_fields FROM table_reference.    (6)
+
+	.  reduce 6 (src line 45)
+
+
+state 15
+	table_reference:  STRING.    (11)
+
+	.  reduce 11 (src line 70)
+
+
+state 16
+	list_fields:  list_fields COMMA field.    (8)
+
+	.  reduce 8 (src line 55)
+
+
+state 17
+	field:  STRING AS STRING.    (10)
+
+	.  reduce 10 (src line 65)
+
+
+9 terminals, 9 nonterminals
+12 grammar rules, 18/16000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+58 working sets used
+memory: parser 8/240000
+0 extra closures
+9 shift entries, 1 exceptions
+9 goto entries
+0 entries saved by goto default
+Optimizer space used: output 17/240000
+17 table entries, 0 zero
+maximum spread: 9, maximum offset: 12
