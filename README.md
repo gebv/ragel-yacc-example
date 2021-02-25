@@ -6,6 +6,7 @@ Examples
 
 References
 
+* https://github.com/calio/ragel-cheat-sheet Ragel Cheat Sheet
 * https://en.wikipedia.org/wiki/LL_parser
 * https://marianogappa.github.io/software/2019/06/05/lets-build-a-sql-parser-in-go/ simple calculator
 * https://github.com/postgres/postgres/blob/master/src/backend/parser/gram.y postgres yacc grammer parser
@@ -20,3 +21,5 @@ heat on
 target temperature 10
 heat off
 ```
+* https://github.com/johan-bjareholt/lua-compiler/blob/master/src/grammar.yy lua grammar
+* https://github.com/vcflib/bio-vcf/blob/master/ragel/gen_vcfheaderline_parser.rl example ragel lex for DSL language
