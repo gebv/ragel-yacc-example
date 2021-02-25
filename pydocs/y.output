@@ -1,0 +1,107 @@
+
+state 0
+	$accept: .doc $end 
+	doc: .    (1)
+
+	CR  shift 4
+	WHITESPACE  shift 8
+	TOKEN  shift 7
+	.  reduce 1 (src line 69)
+
+	word  goto 6
+	words  goto 5
+	line  goto 3
+	lines  goto 2
+	doc  goto 1
+
+state 1
+	$accept:  doc.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	doc:  lines.    (2)
+	lines:  lines.line 
+
+	CR  shift 4
+	WHITESPACE  shift 8
+	TOKEN  shift 7
+	.  reduce 2 (src line 70)
+
+	word  goto 6
+	words  goto 5
+	line  goto 9
+
+state 3
+	lines:  line.    (3)
+
+	.  reduce 3 (src line 74)
+
+
+state 4
+	line:  CR.    (5)
+
+	.  reduce 5 (src line 83)
+
+
+state 5
+	line:  words.CR 
+	words:  words.word 
+
+	CR  shift 10
+	WHITESPACE  shift 8
+	TOKEN  shift 7
+	.  error
+
+	word  goto 11
+
+state 6
+	words:  word.    (7)
+
+	.  reduce 7 (src line 93)
+
+
+state 7
+	word:  TOKEN.    (9)
+
+	.  reduce 9 (src line 103)
+
+
+state 8
+	word:  WHITESPACE.    (10)
+
+	.  reduce 10 (src line 103)
+
+
+state 9
+	lines:  lines line.    (4)
+
+	.  reduce 4 (src line 77)
+
+
+state 10
+	line:  words CR.    (6)
+
+	.  reduce 6 (src line 86)
+
+
+state 11
+	words:  words word.    (8)
+
+	.  reduce 8 (src line 96)
+
+
+7 terminals, 6 nonterminals
+11 grammar rules, 12/16000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+55 working sets used
+memory: parser 8/240000
+0 extra closures
+9 shift entries, 1 exceptions
+7 goto entries
+2 entries saved by goto default
+Optimizer space used: output 13/240000
+13 table entries, 0 zero
+maximum spread: 7, maximum offset: 5
