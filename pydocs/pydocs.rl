@@ -12,6 +12,14 @@ import (
     variable p lex.p;
     variable pe lex.pe;
 
+    action capture {
+        // fmt.Printf("capture: pe=%d ts=%d te=%d p=%d\n", lex.pe, lex.ts, lex.te, lex.p)
+    }
+    action releaseCR {
+        // fmt.Printf("release: pe=%d ts=%d te=%d p=%d\n", lex.pe, lex.ts, lex.te, lex.p)
+        // fmt.Printf("release: %q\n", string(lex.data[lex.ts:lex.p]))
+        lex.p-- // shift left one character
+    }
     action lineCounter { out.line++}
 
     whitespace = [ \t]+;
@@ -19,21 +27,25 @@ import (
 
     # Each line of a block comment starts with a # and a single space (unless it is indented text inside the comment).
 
-    tripleQuotes = [']{3} | ["]{3};
-    singleQuotes = [']{1} | ["]{1};
-    escSingleQuotes = [\\]{1} . singleQuotes;
+    tripleQuotes = "'''" | '"""';
+    singleQuotes = "'" | '"';
+
+    escSingleQuotes = [\\]{1} singleQuotes;
     notEscSingleQuotes = [^\\]{1} . singleQuotes;
 
     # textword = [^ \t\n\r]+ -- tripleQuotes -- startLineComment -- singleQuotes;
     anyWithoutSpace = [^ \t\n\r]+;
-    anyNotQuotes = anyWithoutSpace -- singleQuotes;
-    anyEscQuotes = anyWithoutSpace | escSingleQuotes;
-    strLiteral = singleQuotes . (anyEscQuotes|whitespace)+ . singleQuotes;
 
-    inlineComment = '#' . (anyWithoutSpace|whitespace)+ . newline;
+    anyNotQuotes = (anyWithoutSpace -- [\\"'])+;
+    strLiteral = singleQuotes (anyNotQuotes|whitespace|escSingleQuotes)* singleQuotes;
 
-    multilineCommentContent = (anyWithoutSpace|whitespace|newline);
-    multilineComment = tripleQuotes . newline . multilineCommentContent+ . tripleQuotes . newline;
+    inlineComment = '#' (anyWithoutSpace|whitespace)* newline >capture %releaseCR;
+
+    multilineCommentContent = (anyWithoutSpace|whitespace|newline)+ -- tripleQuotes;
+    multilineCommentBoundary = whitespace* tripleQuotes newline;
+    multilineComment = multilineCommentBoundary
+        multilineCommentContent
+        multilineCommentBoundary >capture %releaseCR;
 }%%
 
 type lexer struct {
@@ -78,14 +90,6 @@ func (lex *lexer) Lex(out *yySymType) int {
     tok := 0
     %%{
         main := |*
-            # hashSymbol => {
-            #    tok = HASHSYMBOL
-            #    fbreak;
-            # };
-            # tripleQuotes => {
-            #    tok = TRIPLEQUOTES
-            #    fbreak;
-            # };
             strLiteral => {
                out.token.val = string(lex.data[lex.ts:lex.te])
                out.token.line = out.line

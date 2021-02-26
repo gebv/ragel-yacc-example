@@ -5,58 +5,67 @@ import (
 	"testing"
 )
 
+var case1 = `
+
+foo # inline comments
+
+# inline comments
+
+"""
+abc
+
+foo="bar" # inline comments
+
+bac
+"""
+bar baz
+
+	"""
+	abc
+
+	bac
+
+	"""
+
+qwd
+	# inline comments
+
+foo="wdwd"
+foo="wd\"wd\""
+foo = "bar"r ""
+""""
+
+baz
+`
+
 func TestDemo(t *testing.T) {
 	yyDebug = 1
 	yyErrorVerbose = true
-	lex := newLexer([]byte(`
-foo bar
-foo
-    bar
-"foo"
-"foo bar"
-"foo \"\"bar" baz
-baz "foo \"bar"
-baz
-
-'qwd' # inline comments
-
-#foobar
-
-"""
-yes
-no
-
-wd
-"wqd"
-
-"""
-
-pok="s"
-
-iu
-
-`))
+	lex := newLexer([]byte(case1))
 	e := yyParse(lex)
 	fmt.Println(e)
 
 	// === RUN   TestDemo
 	// line=CR
-	// line=[free=("foo") + free=("bar")]CR
-	// line=[free=("foo")]CR
-	// line=[+ free=("bar")]CR
-	// line=[str=("\"foo\"")]CR
-	// line=[str=("\"foo bar\"")]CR
-	// line=[str=("\"foo \\\"\\\"bar\"") + free=("baz")]CR
-	// line=[free=("baz") + str=("\"foo \\\"bar\"")]CR
+	// line=CR
+	// line=[free=("foo") + #=("# inline comments")]CR
+	// line=CR
+	// line=[#=("# inline comments")]CR
+	// line=CR
+	// line=[>=("\"\"\"\nabc\n\nfoo=\"bar\" # inline comments\n\nbac\n\"\"\"")]CR
+	// line=[free=("bar") + free=("baz")]CR
+	// line=CR
+	// line=[>=("\t\"\"\"\n\tabc\n\n\tbac\n\n\t\"\"\"")]CR
+	// line=CR
+	// line=[free=("qwd")]CR
+	// line=[+ #=("# inline comments")]CR
+	// line=CR
+	// line=[free=("foo=") str=("\"wdwd\"")]CR
+	// line=[free=("foo=") str=("\"wd\\\"wd\\\"\"")]CR
+	// line=[free=("foo") + free=("=") + str=("\"bar\"") free=("r") + str=("\"\"")]CR
+	// line=[str=("\"\"") str=("\"\"")]CR
+	// line=CR
 	// line=[free=("baz")]CR
-	// line=CR
-	// line=[str=("'qwd'") + #=("# inline comments\n")]CR
-	// line=[#=("#foobar\n")]CR
-	// line=[>=("\"\"\"\nyes\nno\n\nwd\n\"wqd\"\n\n\"\"\"\n")]CR
-	// line=[free=("pok=") str=("\"s\"")]CR
-	// line=CR
-	// line=[free=("iu")]CR
-	// line=CR
 	// 0
 	// --- PASS: TestDemo (0.00s)
 }
