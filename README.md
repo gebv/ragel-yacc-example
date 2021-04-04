@@ -23,3 +23,4 @@ heat off
 ```
 * https://github.com/johan-bjareholt/lua-compiler/blob/master/src/grammar.yy lua grammar
 * https://github.com/vcflib/bio-vcf/blob/master/ragel/gen_vcfheaderline_parser.rl example ragel lex for DSL language
+* cockroachdb yacc grammer parser https://github.com/cockroachdb/cockroach/blob/master/pkg/sql/parser/sql.y
